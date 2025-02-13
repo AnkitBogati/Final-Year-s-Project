@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const multer = require("multer");
-const mongoose = require("mongoose");
 
 const Listing = require("../models/Listing");
 const User = require("../models/User");
@@ -133,25 +132,13 @@ router.get("/search/:search", async (req, res) => {
 
 /* LISTING DETAILS */
 router.get("/:listingId", async (req, res) => {
-  const { listingId } = req.params;
-
-  // Validate the ID
-  if (!mongoose.Types.ObjectId.isValid(listingId)) {
-    return res.status(400).json({ message: "Invalid Listing ID" });
-  }
-
   try {
-    const listing = await Listing.findById(listingId).populate("creator");
-
-    if (!listing) {
-      return res.status(404).json({ message: "Listing not found" });
-    }
-
-    res.status(200).json(listing);
+    const { listingId } = req.params
+    const listing = await Listing.findById(listingId).populate("creator")
+    res.status(202).json(listing)
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-    console.error(err);
+    res.status(404).json({ message: "Listing can not found!", error: err.message })
   }
-});
+})
 
 module.exports = router;
